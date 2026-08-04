@@ -30,4 +30,3 @@ def inverse(f):
     return lambda y:search(lambda x:f(x)==y)
 
 
-
