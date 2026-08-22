@@ -221,22 +221,19 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    if : # Base cases should go here, you may add more base cases as needed.
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    if limit<0:
+        return float('inf')
+    if not typed:
+        return len(source)
+    if not source:
+        return len(typed)
+    if typed[0]==source[0]:
+        return minimum_mewtations(typed[1:],source[1:],limit)
     else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+        add=1+minimum_mewtations(typed,source[1:],limit-1)
+        remove=1+minimum_mewtations(typed[1:],source,limit-1)
+        substitute=1+minimum_mewtations(typed[1:],source[1:],limit-1)
+    return min(add,remove,substitute)
 
 
 def final_diff(typed, source, limit):
@@ -276,7 +273,15 @@ def report_progress(typed, source, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    right_num=0
+    for i in range(len(typed)):
+        if typed[i]!=source[i]:
+            break
+        right_num+=1
+    rate=right_num/len(source)
+    upload({'id':user_id,'progress':rate})
+    return rate
+
     # END PROBLEM 8
 
 
@@ -298,7 +303,11 @@ def time_per_word(words, timestamps_per_player):
     [[6, 3, 6, 2], [10, 6, 1, 2]]
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    time=[]
+    for timestamp in timestamps_per_player:
+        time.append([timestamp[i+1]-timestamp[i] for i in range(len(timestamp)-1)])
+    return match(words,time)
+
     # END PROBLEM 9
 
 
@@ -320,7 +329,15 @@ def fastest_words(match):
     player_indices = range(len(get_all_times(match)))  # contains an *index* for each player
     word_indices = range(len(get_all_words(match)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    player_list=[[] for _ in player_indices]
+    for j in word_indices:
+        time_list=[]
+        for i in player_indices:
+            time_list.append(match["times"][i][j])
+        idx=time_list.index(min(time_list))
+        player_list[idx].append(match["words"][j])
+    return player_list
+        
     # END PROBLEM 10
 
 
