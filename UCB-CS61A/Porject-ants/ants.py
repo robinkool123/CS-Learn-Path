@@ -163,6 +163,8 @@ class ThrowerAnt(Ant):
     implemented = True
     damage = 1
     food_cost=3
+    lower_bound=0
+    upper_bound=float('inf')
     # ADD/OVERRIDE CLASS ATTRIBUTES HERE
   
     def nearest_bee(self):
@@ -173,11 +175,14 @@ class ThrowerAnt(Ant):
         """
         # BEGIN Problem 3 and 4
         place=self.place
+        distance=0
         while place is not None and not place.is_hive:
             bee=random_bee(place.bees)
-            place=place.entrance
-            if bee:
+            if bee and self.upper_bound >= distance >= self.lower_bound:
                 return bee
+            place=place.entrance
+            distance += 1
+        return None
         # END Problem 3 and 4
 
     def throw_at(self, target):
@@ -209,9 +214,10 @@ class ShortThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    lower_bound=0
+    upper_bound=3
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
-
 
 class LongThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees at least 5 places away."""
@@ -220,7 +226,9 @@ class LongThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    lower_bound=5
+    upper_bound=float('inf')
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -232,7 +240,7 @@ class FireAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 5
 
     def __init__(self, health=3):
@@ -247,15 +255,47 @@ class FireAnt(Ant):
         the additional damage if the fire ant dies.
         """
         # BEGIN Problem 5
-        "*** YOUR CODE HERE ***"
+        place=self.place
+        bees_list=place.bees[:]
+        for bee in bees_list:
+            if self.health-amount<=0:
+                bee.reduce_health(amount+self.damage)
+            else:
+                bee.reduce_health(amount)
+        super().reduce_health(amount)
         # END Problem 5
 
 # BEGIN Problem 6
-# The WallAnt class
+class WallAnt(Ant):
+    name = 'Wall'
+    implemented = True
+    food_cost = 4
+
+    def __init__(self,health=4):
+        super().__init__(health)
+    
 # END Problem 6
 
 # BEGIN Problem 7
-# The HungryAnt Class
+class HungryAnt(Ant):
+    name = 'Hungry'
+    implemented = True
+    food_cost = 4
+    chewing_turns = 3
+
+    def __init__(self,health=1):
+        self.turns_to_chew = 0
+        super().__init__(health)
+
+    def action(self, gamestate):
+        place = self.place
+        if self.turns_to_chew:
+            self.turns_to_chew -= 1
+        else:
+            bee = random_bee(place.bees)
+            if bee:
+                self.turns_to_chew = self.chewing_turns
+                bee.reduce_health(bee.health)
 # END Problem 7
 
 
@@ -484,7 +524,7 @@ class Boss(Wasp):
         super().reduce_health(min(amount, self.damage_cap))
 
 
-class                                  Hive(Place):
+class Hive(Place):
     """The Place from which the Bees launch their assault.
 
     assault_plan -- An AssaultPlan; when & where bees enter the colony.
