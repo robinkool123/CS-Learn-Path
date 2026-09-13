@@ -77,6 +77,67 @@ class Keyboard:
         assert all([w in LOWERCASE_LETTERS for w in word]), 'word must be all lowercase'
         for w in word:
             self.keys[w].press()
+
+class Eye:
+    """An eye.
+
+    >>> Eye().draw()
+    '0'
+    >>> print(Eye(False).draw(), Eye(True).draw())
+    0 -
+    """
+    def __init__(self, closed=False):
+        self.closed = closed
+
+    def draw(self):
+        if self.closed:
+            return '-'
+        else:
+            return '0'
+
+class Bear:
+    """A bear.
+
+    >>> Bear().print()
+    ? 0o0?
+    """
+    def __init__(self):
+        self.nose_and_mouth = 'o'
+
+    def next_eye(self):
+        return Eye()
+
+    def print(self):
+        left, right = self.next_eye(), self.next_eye()
+        print('? ' + left.draw() + self.nose_and_mouth + right.draw() + '?')
+
+class SleepyBear(Bear):
+    """A bear with closed eyes.
+
+    >>> SleepyBear().print()
+    ? -o-?
+    """
+    def print(self):
+        print('? ' + Eye(True).draw() + self.nose_and_mouth + Eye(True).draw() + '?')
+
+class WinkingBear(Bear):
+    """A bear whose left eye is different from its right eye.
+
+    >>> WinkingBear().print()
+    ? -o0?
+    """
+    def __init__(self):
+        super().__init__()
+        self.times = 0
+
+    def next_eye(self):
+        if self.times % 2 ==0:
+            result = Eye(True)
+        else:
+            result = Eye()
+        self.times+=1
+        return result
+        
         
 
         
