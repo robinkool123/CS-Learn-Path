@@ -130,24 +130,11 @@ def duplicate_link(s, val):
     >>> z
     Link(1, Link(2, Link(2, Link(2, Link(2, Link(3))))))
     """
-    while True:
-        if s.first == val:
-            result = Link(s.first,s)
-        else:
-            result = Link(s.first,duplicate_link(s, val))
-        s = s.rest
-        if s is Link.empty:
-            return Link.empty
-        return result
-
-
-
-
-
-
-    if s.first == val and s.rest is Link.empty:
-        s.rest = Link(val)
-    elif s.first ==val:
-        return Link(s.first,Link(s.first,s.rest))
+    if s is Link.empty:
+        return  
+    elif s.first == val:
+        remaining = s.rest
+        s.rest = Link(val,s.rest)
+        duplicate_link(remaining, val)
     else:
-        return  duplicate_link(s.rest, val)
+        duplicate_link(s.rest, val)
