@@ -78,3 +78,38 @@ def display(s, k=10):
         digits += str(s.first)
         s = s.rest
     print(digits + '...')
+
+def duplicate_link(s, val):
+    """Mutates s so that each element equal to val is followed by another val.
+
+    >>> x = Link(5, Link(4, Link(5)))
+    >>> duplicate_link(x, 5)
+    >>> x
+    Link(5, Link(5, Link(4, Link(5, Link(5)))))
+    >>> y = Link(2, Link(4, Link(6, Link(8))))
+    >>> duplicate_link(y, 10)
+    >>> y
+    Link(2, Link(4, Link(6, Link(8))))
+    >>> z = Link(1, Link(2, (Link(2, Link(3)))))
+    >>> duplicate_link(z, 2) # ensures that back to back links with val are both duplicated
+    >>> z
+    Link(1, Link(2, Link(2, Link(2, Link(2, Link(3))))))
+    """
+    if s is Link.empty:
+        return  
+    if s.first == val:
+        s.rest = Link(s.first,s.rest)
+        duplicate_link(s.rest.rest, val)
+    else:
+        duplicate_link(s.rest, val)
+
+def draw(hand, positions):
+    """Remove and return the items at positions from hand.
+
+    >>> hand = ['A', 'K', 'Q', 'J', 10, 9]
+    >>> draw(hand, [2, 1, 4])
+    ['K', 'Q', 10]
+    >>> hand
+    ['A', 'J', 9]
+    """
+    return list(reversed([hand.pop(i) for i in reversed(sorted(positions))]))
